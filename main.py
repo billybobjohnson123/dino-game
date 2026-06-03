@@ -5,11 +5,13 @@ import obstacles
 pygame.init()
 
 screen = pygame.display.set_mode((1280,720))
-
 clock = pygame.time.Clock()
 
 height = 500
 dino = dino.Dino((0,0,0), height * 2/3, height/2, height)
+pygame.display.set_icon(pygame.image.load('img/dino.png'))
+pygame.display.set_caption("Dino Game")
+count = 0
 
 while True:
     # Process player inputs.
@@ -28,5 +30,10 @@ while True:
     # ...
     dino.uncrouch()
     dino.draw(screen, 600, 200)
+    if count > 100:
+        count = 0
+    if count % 5 == 0:
+        dino.walk()
     pygame.display.flip()  # Refresh on-screen display
     clock.tick(60)         # wait until next frame (at 60 FPS)
+    count += 1
