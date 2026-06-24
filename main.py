@@ -2,10 +2,11 @@ import pygame
 import dino
 import obstacles
 
+
 dt = 0
 
 pygame.init()
-
+font = pygame.font.Font('font/PressStart2P-Regular.ttf', 32)
 screen = pygame.display.set_mode((1280,720))
 clock = pygame.time.Clock()
 
@@ -15,6 +16,8 @@ obstacle = obstacles.Obstacle(500, 430)
 pygame.display.set_icon(pygame.image.load('img/dino.png'))
 pygame.display.set_caption("Dino Game")
 count = 0
+game_over = False
+
 
 while True:
     dt = clock.tick(60) / 1000.0
@@ -63,9 +66,18 @@ while True:
         count = 0
     if count % 5 == 0:
         dino.walk()
-    pygame.display.flip()  # Refresh on-screen display
+    
     
     count += 1
 
     if dino.rect.colliderect(obstacle.rect):
-        print('True')
+        game_over = True
+        
+    if game_over:
+        screen.blit(font.render('Hello!', True, (255,0,0)), (200, 100))
+        
+
+
+
+    pygame.display.flip()  # Refresh on-screen display
+
