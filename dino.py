@@ -30,8 +30,8 @@ class Dino:
         self.crouched_image2 = pygame.image.load('img/dino_crouching2.png')
         self.crouched_image2 = pygame.transform.scale(self.crouched_image2, (100, 100))
 
-
-
+        print(self.crouched_image1.get_rect(x = self.x, y = self.y))
+        print(self.walking_image1.get_rect(x = self.x, y = self.y))
         self.current = self.walking_image1
         self.rect = self.current.get_rect(x = self.x, y = self.y)
 
@@ -40,14 +40,14 @@ class Dino:
 
         self.y_velocity = 0
 
-        self.gravity = 600
+        self.gravity = 4000
 
     def draw(self, screen):
         screen.blit(self.current, self.rect)
 
     def crouch(self):
         self.crouched = True
-        self.rect = self.current.get_rect(x = self.x, y = self.y)
+
 
     def uncrouch(self):
         self.crouched = False
@@ -67,10 +67,10 @@ class Dino:
         self.rect.y = self.y
 
     def walk(self):
-
         if self.crouched:
             if self.current == self.crouched_image1:
                 self.current = self.crouched_image2
+                
             else:
                 self.current = self.crouched_image1
 
@@ -79,3 +79,4 @@ class Dino:
                 self.current = self.walking_image2
             else:
                 self.current = self.walking_image1
+        self.rect = self.current.get_rect(x = self.x, y = self.y)

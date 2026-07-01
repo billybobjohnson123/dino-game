@@ -9,7 +9,7 @@ class Obstacle:
         self.x = x
         self.y = y
 
-        self.speed = 200
+        self.speed = 600
 
         self.image = pygame.image.load("img/dino_cactus.png")
         self.cactus_image = pygame.transform.scale(self.image, (50, 70))
