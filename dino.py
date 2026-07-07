@@ -1,5 +1,12 @@
 # Attributes: color, jump height, crouch height, dino height
 # Actions: jump, crouch
+
+#make crouch work
+#get crouch 1 png back
+#how transform work
+#more variables clearer
+
+
 import pygame
 
 dt = 0
