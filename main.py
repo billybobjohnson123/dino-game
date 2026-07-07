@@ -14,8 +14,8 @@ score_font = pygame.font.Font('font/PressStart2P-Regular.ttf', 20)
 screen = pygame.display.set_mode((1280,720))
 clock = pygame.time.Clock()
 
-height = 1600
-dino = dino.Dino((0,0,0), height * 4/5, height/2, height, 200, 410)
+height = 100
+dino = dino.Dino((0,0,0), 1280, height/2 , height, 200, 410)
 pygame.display.set_icon(pygame.image.load('img/dino.png'))
 pygame.display.set_caption("Dino Game")
 count = 0
