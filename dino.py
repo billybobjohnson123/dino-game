@@ -12,7 +12,7 @@ import pygame
 dt = 0
 
 class Dino:
-    def __init__(self,color,jump_velocity,crouch_height,dino_height, x, y):
+    def __init__(self,color,jump_velocity,crouch_height,dino_height, floor_y, x, y):
 
         self.color = color
 
@@ -21,9 +21,9 @@ class Dino:
 
         self.jump_velocity = jump_velocity
         self.crouch_height =crouch_height
-        print(self.crouch_height)
         self.dino_height = dino_height
         self.current_height = dino_height
+        self.floor_y = floor_y
 
         self.standing_image = pygame.image.load('img/dino.png')
         self.standing_image = pygame.transform.scale(self.standing_image, (100, 100))
@@ -52,21 +52,24 @@ class Dino:
 
     def crouch(self):
         self.crouched = True
-        self.rect = self.current.get_rect(topleft=(self.x, self.y))
 
     def uncrouch(self):
         self.crouched = False
-        self.rect = self.current.get_rect(topleft=(self.x, self.y))
 
     def jump(self):
         self.y_velocity = -self.jump_velocity
 
     def simulate(self, dt):
-        self.y += self.y_velocity * dt
-        self.y_velocity += self.gravity * dt
-
-        if self.get_bottom_left_y() > 310:
-            self.set_bottom_left_y(310)
+        if self.y_velocity != 0:
+            self.rect.y += self.y_velocity * dt
+            self.y_velocity += self.gravity * dt
+    
+        if self.get_bottom_left_y() < self.floor_y:
+            self.rect.y += self.y_velocity * dt
+            self.y_velocity += self.gravity * dt
+        else:
+            self.set_bottom_left_y(self.floor_y)
+            self.y_velocity = 0
 
     def walk(self):
         if self.crouched:
@@ -82,15 +85,9 @@ class Dino:
             else:
                 self.current = self.walking_image1
 
-
     def get_bottom_left_y(self):
-        if self.crouched:
-            return self.rect.y + 100
-        else:
-            return self.rect.y + 50 
+        return self.rect.y + self.dino_height
         
     def set_bottom_left_y(self, val):
-        if self.crouched:
-            self.y = val + 50
-        else:
-            self.y = val + 100
+        self.rect.y = val - self.dino_height
+
