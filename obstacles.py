@@ -4,17 +4,23 @@ import pygame
 
 class Obstacle:
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, type):
 
         self.x = x
         self.y = y
 
-        self.speed = 600
+        self.speed = 500
 
-        self.image = pygame.image.load("img/dino_cactus.png")
-        self.cactus_image = pygame.transform.scale(self.image, (50, 70))
+        self.cactus_image = pygame.image.load("img/dino_cactus.png")
+        self.cactus_image = pygame.transform.scale(self.cactus_image, (50, 70))
+        self.pterodactyl_image = pygame.image.load("img/pterodactyl1.png")
+        self.pterodactyl_image = pygame.transform.scale(self.pterodactyl_image, (90, 60))
+        if type == "cactus":
+             self.image = self.cactus_image
+        else:
+             self.image = self.pterodactyl_image
 
-        self.rect = self.cactus_image.get_rect(x=self.x, y=self.y)
+        self.rect = self.image.get_rect(x=self.x, y=self.y)
 
 
     def simulate(self, dt):
@@ -22,4 +28,4 @@ class Obstacle:
         self.rect.x = self.x
 
     def draw(self, screen, x, y):
-        screen.blit(self.cactus_image, self.rect)
+            screen.blit(self.image, self.rect)

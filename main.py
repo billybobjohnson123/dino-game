@@ -2,9 +2,10 @@ import pygame
 import dino
 import obstacles
 import random
-
+#fix spawning logic to spawn only a single obs at once, add some logic to prevent pteros from spawnign too early
 dt = 0
 frames = 0
+frames2 = 0
 obs = []
 score = 0
 floor_y = 500
@@ -18,7 +19,7 @@ screen = pygame.display.set_mode((screen_width,screen_height))
 clock = pygame.time.Clock()
 
 height = 100
-dino = dino.Dino((0,0,0), 1280, height/2 , height, floor_y, 200, 0)
+dino = dino.Dino((0,0,0), 700, height/2 , height, floor_y, 200, 0)
 pygame.display.set_icon(pygame.image.load('img/dino.png'))
 pygame.display.set_caption("Dino Game")
 count = 0
@@ -49,6 +50,7 @@ while True:
     #     continue
     dt = clock.tick(60) / 1000.0
     frames += 1
+    frames2 += 1
     score += 1
     # Process player inputs.
     dino.simulate(dt) # wait until next frame (at 60 FPS)
@@ -56,11 +58,17 @@ while True:
 
     if pressed_keys[pygame.K_SPACE] and dino.get_bottom_left_y() == floor_y:
         dino.jump()
-    if frames > 60:
-        num = random.randint(-200,200)
+    if frames > 120:
+        num = random.randint(-75,75)
         frames = 0
         print('run')
-        obstacle = obstacles.Obstacle(1280+num, 430)
+        obstacle = obstacles.Obstacle(1280+num, 430, "cactus")
+        obs.append(obstacle)
+    if frames2 > 240:
+        num = random.randint(-75,75)
+        frames2 = 0
+        print('run')
+        obstacle = obstacles.Obstacle(1280+num, 380, "pterodactyl")
         obs.append(obstacle)
     for i in obs:
         i.simulate(dt)
@@ -103,7 +111,6 @@ while True:
         screen.blit(font.render('GAME OVER!', True, (255,0,0)), (500, 100))
         running = False
     
-    screen.blit(dino.current, dino.rect)
     screen.blit(score_font.render(str(score), True, (128,128,128)), (1100, 100))
 
     pygame.display.flip()  # Refresh on-screen display()

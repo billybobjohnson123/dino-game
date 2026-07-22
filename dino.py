@@ -34,28 +34,37 @@ class Dino:
         self.walking_image2 = pygame.transform.scale(self.walking_image2, (100, 100))
        
         self.crouched_image1 = pygame.image.load('img/dino_crouching2.png')
-        self.crouched_image1 = pygame.transform.scale(self.crouched_image1, (100, 100))
+        self.crouched_image1 = pygame.transform.scale(self.crouched_image1, (100, 80))
         self.crouched_image2 = pygame.image.load('img/dino_crouching2.png')
-        self.crouched_image2 = pygame.transform.scale(self.crouched_image2, (100, 100))
+        self.crouched_image2 = pygame.transform.scale(self.crouched_image2, (100, 80))
 
         self.current = self.walking_image1
-        self.rect = self.current.get_rect(topleft=(self.x, self.y))
+        # self.rect = self.current.get_rect(topleft=(self.x, self.y))
 
+        # I want to create a rectangle with height self.dino_height where the image is
+        self.rect = pygame.Rect(self.x, self.y, self.dino_height, self.dino_height)
         self.crouched = False
 
         self.y_velocity = 0
 
-        self.gravity = 4000
+        self.gravity = 1200
 
     def draw(self, screen):
-        screen.blit(self.current, self.rect)
+        if not self.crouched:
+            screen.blit(self.current, self.rect)
+            
+        else:
+            self.img_rect = pygame.Rect(self.rect.left, self.rect.top - (self.crouch_height-20), self.rect.width, self.rect.height)
+            screen.blit(self.current, self.img_rect)
 
     def crouch(self):
         self.crouched = True
+        # I want to set self.rect to have a height of self.crouch_height
+        self.rect.height = self.crouch_height
 
     def uncrouch(self):
         self.crouched = False
-
+        self.rect.height = self.dino_height
     def jump(self):
         self.y_velocity = -self.jump_velocity
 
@@ -86,8 +95,14 @@ class Dino:
                 self.current = self.walking_image1
 
     def get_bottom_left_y(self):
-        return self.rect.y + self.dino_height
+        if self.crouched:
+            return self.rect.y + self.crouch_height
+        else:
+            return self.rect.y + self.dino_height
         
     def set_bottom_left_y(self, val):
-        self.rect.y = val - self.dino_height
+        if self.crouched:
+            self.rect.y = val - self.crouch_height
+        else:
+            self.rect.y = val - self.dino_height
 
