@@ -1,25 +1,28 @@
 #Attributes for cacti: height, width, position, graphic
 #Attributes for Pterodactyl: height, width, position, graphic
 import pygame
+import random
 
 class Obstacle:
 
-    def __init__(self, x, y, type):
+    def __init__(self, x, floor, type):
 
         self.x = x
-        self.y = y
+        self.floor = floor
 
-        self.speed = 500
+        self.size = random.randint(50, 90)
+        self.speed = 700
 
         self.cactus_image = pygame.image.load("img/dino_cactus.png")
-        self.cactus_image = pygame.transform.scale(self.cactus_image, (50, 70))
+        self.cactus_image = pygame.transform.scale(self.cactus_image, (self.size, self.size))
         self.pterodactyl_image = pygame.image.load("img/pterodactyl1.png")
-        self.pterodactyl_image = pygame.transform.scale(self.pterodactyl_image, (90, 60))
+        self.pterodactyl_image = pygame.transform.scale(self.pterodactyl_image, (self.size, self.size))
         if type == "cactus":
-             self.image = self.cactus_image
+            self.image = self.cactus_image
+            self.y = floor - self.size
         else:
-             self.image = self.pterodactyl_image
-
+            self.image = self.pterodactyl_image
+            self.y = floor - self.size
         self.rect = self.image.get_rect(x=self.x, y=self.y)
 
 
@@ -28,4 +31,4 @@ class Obstacle:
         self.rect.x = self.x
 
     def draw(self, screen, x, y):
-            screen.blit(self.image, self.rect)
+        screen.blit(self.image, self.rect)

@@ -11,6 +11,7 @@ score = 0
 floor_y = 500
 screen_width = 1280
 screen_height = 720
+obstacle_types = ["cactus", "pterodactyl"]
 
 pygame.init()
 font = pygame.font.Font('font/PressStart2P-Regular.ttf', 32)
@@ -24,30 +25,31 @@ pygame.display.set_icon(pygame.image.load('img/dino.png'))
 pygame.display.set_caption("Dino Game")
 count = 0
 game_over = False
-#running = False
+running = False
 
 
 while True:
-    # if not running and not game_over:
-    #     screen.blit(font.render('PRESS SPACE TO START!', True, (255,0,0)), (300, 100)) 
-    #     pygame.display.flip()  
+    if not running and not game_over:
+         screen.blit(font.render('PRESS SPACE TO START!', True, (255,0,0)), (300, 100)) 
+         pygame.display.flip()  
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             raise SystemExit
         if event.type == pygame.KEYDOWN:
             if event.mod != pygame.KMOD_NONE:
-                if event.mod & (pygame.KMOD_LSHIFT | pygame.KMOD_RSHIFT):
+                if event.mod & (pygame.KMOD_LSHIFT or pygame.KMOD_RSHIFT):
                     dino.crouch()
         if event.type == pygame.KEYUP:
             if event.mod != pygame.KMOD_NONE:
                 if event.mod & ~(pygame.KMOD_LSHIFT | pygame.KMOD_RSHIFT):
                     dino.uncrouch()
 
-    #     if pygame.key.get_pressed()[pygame.K_SPACE]:
-    #         running = True
-    # if not running:
-    #     continue
+    if pygame.key.get_pressed()[pygame.K_SPACE]:
+        game_over = False
+        running = True
+    if not running:
+        continue
     dt = clock.tick(60) / 1000.0
     frames += 1
     frames2 += 1
@@ -56,19 +58,23 @@ while True:
     dino.simulate(dt) # wait until next frame (at 60 FPS)
     pressed_keys = pygame.key.get_pressed()
 
-    if pressed_keys[pygame.K_SPACE] and dino.get_bottom_left_y() == floor_y:
+    if pressed_keys[pygame.K_DOWN] and dino.get_bottom_left_y() == floor_y:
+        dino.crouch()
+    if (pressed_keys[pygame.K_SPACE] or pressed_keys[pygame.K_UP]) and dino.get_bottom_left_y() == floor_y:
         dino.jump()
-    if frames > 120:
-        num = random.randint(-75,75)
+    if pressed_keys[pygame.K_DOWN]:
+        dino.gravity = 5000
+    else:
+        dino.gravity = 1200
+    if frames > 80:
+        num = random.randint(-150,150)
         frames = 0
         print('run')
-        obstacle = obstacles.Obstacle(1280+num, 430, "cactus")
-        obs.append(obstacle)
-    if frames2 > 240:
-        num = random.randint(-75,75)
-        frames2 = 0
-        print('run')
-        obstacle = obstacles.Obstacle(1280+num, 380, "pterodactyl")
+        choice = random.choices(obstacle_types, weights=[3, 1], k=1)[0]
+        if choice == "cactus":
+            obstacle = obstacles.Obstacle(1280+num, floor_y, "cactus")
+        else:
+            obstacle = obstacles.Obstacle(1280+num, floor_y, "pterodactyl")
         obs.append(obstacle)
     for i in obs:
         i.simulate(dt)
