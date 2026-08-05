@@ -8,10 +8,13 @@ frames = 0
 frames2 = 0
 obs = []
 score = 0
+best_score = 0
 floor_y = 500
 screen_width = 1280
 screen_height = 720
 obstacle_types = ["cactus", "pterodactyl"]
+obs_speed = 750
+frames_to_spawn = 75
 
 pygame.init()
 font = pygame.font.Font('font/PressStart2P-Regular.ttf', 32)
@@ -20,7 +23,7 @@ screen = pygame.display.set_mode((screen_width,screen_height))
 clock = pygame.time.Clock()
 
 height = 100
-dino = dino.Dino((0,0,0), 700, height/2 , height, floor_y, 200, 0)
+dino = dino.Dino((0,0,0), 600, height/2 , height, floor_y, 200, 0)
 pygame.display.set_icon(pygame.image.load('img/dino.png'))
 pygame.display.set_caption("Dino Game")
 count = 0
@@ -30,8 +33,8 @@ running = False
 
 while True:
     if not running and not game_over:
-         screen.blit(font.render('PRESS SPACE TO START!', True, (255,0,0)), (300, 100)) 
-         pygame.display.flip()  
+        screen.blit(font.render('PRESS SPACE TO START!', True, (255,0,0)), (300, 100)) 
+        pygame.display.flip()  
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -46,6 +49,11 @@ while True:
                     dino.uncrouch()
 
     if pygame.key.get_pressed()[pygame.K_SPACE]:
+        if score > best_score and game_over:
+            best_score = score
+        if game_over:
+            score = 0
+            obs = []        
         game_over = False
         running = True
     if not running:
@@ -60,22 +68,26 @@ while True:
 
     if pressed_keys[pygame.K_DOWN] and dino.get_bottom_left_y() == floor_y:
         dino.crouch()
-    if (pressed_keys[pygame.K_SPACE] or pressed_keys[pygame.K_UP]) and dino.get_bottom_left_y() == floor_y:
-        dino.jump()
+    if (pressed_keys[pygame.K_SPACE] or pressed_keys[pygame.K_UP]):
+        dino.add_velocity()
+
     if pressed_keys[pygame.K_DOWN]:
         dino.gravity = 5000
     else:
         dino.gravity = 1200
-    if frames > 80:
+    if frames > frames_to_spawn:
         num = random.randint(-150,150)
         frames = 0
-        print('run')
         choice = random.choices(obstacle_types, weights=[3, 1], k=1)[0]
         if choice == "cactus":
-            obstacle = obstacles.Obstacle(1280+num, floor_y, "cactus")
+            obstacle = obstacles.Obstacle(1280+num, floor_y, "cactus", obs_speed)
         else:
-            obstacle = obstacles.Obstacle(1280+num, floor_y, "pterodactyl")
+            obstacle = obstacles.Obstacle(1280+num, floor_y, "pterodactyl", obs_speed)
         obs.append(obstacle)
+        if obs_speed < 2000:
+            obs_speed += 10
+        if frames_to_spawn > 25:
+            frames_to_spawn -= 1
     for i in obs:
         i.simulate(dt)
         
@@ -93,9 +105,9 @@ while True:
     pygame.draw.rect(screen, (0,0,0), ground)
 
 
-    pygame.draw.rect(screen, (255,0,0), dino.rect, 2)
-    for i in obs:
-        pygame.draw.rect(screen, (255,0,0), i.rect, 2)
+    #pygame.draw.rect(screen, (255,0,0), dino.rect, 2)
+    #for i in obs:
+    #    pygame.draw.rect(screen, (255,0,0), i.rect, 2)
 
 
 
@@ -116,8 +128,7 @@ while True:
     if game_over:
         screen.blit(font.render('GAME OVER!', True, (255,0,0)), (500, 100))
         running = False
-    
-    screen.blit(score_font.render(str(score), True, (128,128,128)), (1100, 100))
-
+    screen.blit(score_font.render('SCORE: ' + str(score), True, (128,128,128)), (1000, 50))
+    screen.blit(score_font.render('HIGHSCORE: ' + str(best_score), True, (128,128,128)), (100, 50))
     pygame.display.flip()  # Refresh on-screen display()
 

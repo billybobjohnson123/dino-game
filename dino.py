@@ -24,6 +24,8 @@ class Dino:
         self.dino_height = dino_height
         self.current_height = dino_height
         self.floor_y = floor_y
+        self.additive_velocity= -jump_velocity
+        self.num_called = 0
 
         self.standing_image = pygame.image.load('img/dino.png')
         self.standing_image = pygame.transform.scale(self.standing_image, (100, 100))
@@ -47,7 +49,7 @@ class Dino:
 
         self.y_velocity = 0
 
-        self.gravity = 1200
+        self.gravity = 900
 
     def draw(self, screen):
         if not self.crouched:
@@ -79,6 +81,7 @@ class Dino:
         else:
             self.set_bottom_left_y(self.floor_y)
             self.y_velocity = 0
+            self.additive_velocity = -self.jump_velocity
 
     def walk(self):
         if self.crouched:
@@ -106,3 +109,10 @@ class Dino:
         else:
             self.rect.y = val - self.dino_height
 
+    def add_velocity(self): 
+        self.num_called += 1
+        if self.num_called >= 4:
+            self.y_velocity += self.additive_velocity
+            self.additive_velocity += 400
+            self.additive_velocity = min(self.additive_velocity,0)
+            self.num_called = 0
