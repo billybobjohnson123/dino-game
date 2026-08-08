@@ -34,7 +34,7 @@ running = False
 while True:
     if not running and not game_over:
         screen.blit(font.render('PRESS SPACE TO START!', True, (255,0,0)), (300, 100)) 
-        pygame.display.flip()  
+        pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -53,7 +53,7 @@ while True:
             best_score = score
         if game_over:
             score = 0
-            obs = []        
+            obs = [] 
         game_over = False
         running = True
     if not running:
